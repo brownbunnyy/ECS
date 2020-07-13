@@ -1,15 +1,32 @@
 FROM php:7.3-fpm-alpine
-LABEL maintainer "kumai"
+LABEL maintainer "tkumai"
 
-ARG TZ
-ENV COMPOSER_ALLOW_SUPERUSER 1
-ENV COMPOSER_HOME /composer
+ARG UID=911
+ARG UNAME=www
+ARG GID=911
+ARG GNAME=www
 
-RUN set -eux && \
-  apk add --update-cache --no-cache --virtual=.build-dependencies tzdata && \
-  cp /usr/share/zoneinfo/${TZ} /etc/localtime && \
-  apk del .build-dependencies && \
-  docker-php-ext-install bcmath pdo_mysql && \
-  curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer && \
-  composer config -g repos.packagist composer https://packagist.jp && \
-  composer global require hirak/prestissimo
+ENV WORKDIR=/var/www/html
+WORKDIR $WORKDIR
+
+COPY ./docker/php/php.ini /usr/local/etc/php/php.ini
+COPY ./src/composer.json ./src/composer.lock ${WORKDIR}/
+
+RUN set -x \
+  && apk add --no-cache git php7-zlib zlib-dev libzip-dev \
+  && docker-php-ext-install pdo_mysql zip \
+  && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+  && composer install --no-autoloader --no-progress --no-dev
+
+COPY ./src .
+
+RUN set -x \
+  && composer install --no-progress --no-dev \
+  && php artisan config:clear \
+  && addgroup ${GNAME} -g ${GID} \
+  && adduser -D -G ${GNAME} -u ${UID} ${UNAME} \
+  && chown -R ${UNAME}:${GNAME} ${WORKDIR} \
+  && mv /root/.composer /home/${UNAME}/ \
+  && chown -R ${UNAME}:${GNAME} /home/${UNAME}
+
+USER ${UNAME}
