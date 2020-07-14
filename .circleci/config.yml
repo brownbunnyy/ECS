@@ -1,0 +1,14 @@
+orbs:
+  aws-ecr: circleci/aws-ecr@6.10.0
+version: 2.1
+workflows:
+  build_and_push_image:
+    jobs:
+      - aws-ecr/build-and-push-image:
+          account-url: AWS_ECR_ACCOUNT_URL
+          aws-access-key-id: ACCESS_KEY_ID
+          aws-secret-access-key: SECRET_ACCESS_KEY
+          path: docker/php/Dockerfile
+          region: ap-northeast-1
+          repo: app
+          tag: 'latest'
