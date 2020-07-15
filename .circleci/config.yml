@@ -6,20 +6,14 @@ workflows:
   build_and_push_image:
     jobs:
       - aws-ecr/build-and-push-image:
-          account-url: AWS_ECR_ACCOUNT_URL
-          aws-access-key-id: ACCESS_KEY_ID
-          aws-secret-access-key: SECRET_ACCESS_KEY
           path: .
           dockerfile: docker/php/Dockerfile
           region: AWS_REGION
-          repo: app
+          repo: MY_APP_PREFIX
           tag: 'latest'
       - aws-ecs/deploy-service-update:
-          account-url: AWS_ECR_ACCOUNT_URL
-          aws-access-key-id: ACCESS_KEY_ID
-          aws-secret-access-key: SECRET_ACCESS_KEY
           requires:
             - aws-ecr/build-and-push-image
-          family: 'app-service'
+          family: '${MY_APP_PREFIX}-service'
           cluster-name: 'test-cluster'
-          container-image-name-updates: 'container=app-service,tag=lastest'
+          container-image-name-updates: 'container=${MY_APP_PREFIX}-service,tag=lastest'
