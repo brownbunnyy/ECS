@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   aws-ecr: circleci/aws-ecr@6.10.0
+  aws-ecs: circleci/aws-ecs@1.2.0
 workflows:
   build_and_push_image:
     jobs:
@@ -13,3 +14,9 @@ workflows:
           region: AWS_REGION
           repo: app
           tag: 'latest'
+      - aws-ecs/deploy-service-update:
+          requires:
+            - aws-ecr/build-and-push-image
+          family: 'app-service'
+          cluster-name: 'test-cluster'
+          container-image-name-updates: 'container=app-service,tag=lastest'
