@@ -14,6 +14,6 @@ workflows:
       - aws-ecs/deploy-service-update:
           requires:
             - aws-ecr/build-and-push-image
-          family: '$app-service'
+          family: 'app-service'
           cluster-name: 'test-cluster'
           container-image-name-updates: 'container=app-service,tag=lastest'
