@@ -17,7 +17,6 @@ workflows:
       - aws-ecs/deploy-service-update:
           aws-access-key-id: ACCESS_KEY_ID
           aws-secret-access-key: SECRET_ACCESS_KEY
-          region: AWS_REGION
           requires:
             - aws-ecr/build-and-push-image
           family: 'app-service'
