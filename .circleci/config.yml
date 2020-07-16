@@ -10,7 +10,7 @@ workflows:
           dockerfile: docker/php/Dockerfile
           region: AWS_REGION
           repo: app
-          tag: 'latest'
+          tag: 'app'
       - aws-ecs/deploy-service-update:
           requires:
             - aws-ecr/build-and-push-image
