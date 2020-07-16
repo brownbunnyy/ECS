@@ -17,4 +17,4 @@ workflows:
           family: 'ecssample-task'
           cluster-name: 'test-cluster'
           service-name: 'app-service'
-          container-image-name-updates: 'container=app,tag=lastest'
+          container-image-name-updates: 'container=app,tag=latest'
