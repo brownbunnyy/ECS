@@ -19,10 +19,12 @@ RUN set -x \
   && composer install --no-autoloader --no-progress --no-dev
 
 COPY ./src .
+COPY ./src/.env.example .env
 
 RUN set -x \
   && composer install --no-progress --no-dev \
   && php artisan config:clear \
+  && php artisan key:generate \
   && addgroup ${GNAME} -g ${GID} \
   && adduser -D -G ${GNAME} -u ${UID} ${UNAME} \
   && chown -R ${UNAME}:${GNAME} ${WORKDIR} \
